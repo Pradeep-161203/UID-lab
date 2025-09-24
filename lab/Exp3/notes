@@ -1,0 +1,48 @@
+Aim:
+  To Create a calculator application that performs basic arithmetic operations using React's state management.
+Description
+A calculator application in React can be built using state management with the useState hook. The calculator has a display screen
+and buttons for digits (0–9), operators (+, −, ×, ÷), and utility keys (C for clear, = for evaluation). Each time a user clicks a button,
+the input is updated and stored in the component’s state. When the = button is pressed, React evaluates the expression using the stored state
+and updates the display with the result. This approach ensures that the UI updates instantly whenever the state changes, making the
+calculator interactive and responsive.
+Coding:
+import Calculator from '../components/Calculator';
+
+function CalculatorPage() {
+  return (
+    <div className="page">
+      <div className="container">
+        <h1 className="page-title">Calculator</h1>
+        <p className="page-description">
+          A fully functional calculator built with React state management. 
+          Demonstrates useState hooks for managing calculator state including display, 
+          operations, and calculations.
+        </p>
+        
+        <div className="calculator-page-content">
+          <div className="calculator-section">
+            <Calculator />
+          </div>
+          
+          <div className="calculator-features">
+            <h2>Features</h2>
+            <ul>
+              <li>Basic arithmetic operations (+, -, ×, ÷)</li>
+              <li>Decimal point support</li>
+              <li>Percentage calculations</li>
+              <li>Positive/negative toggle</li>
+              <li>Clear all functionality</li>
+              <li>Real-time expression display</li>
+              <li>State management with React hooks</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default CalculatorPage;
+Result
+A working calculator that lets the user input numbers, perform addition, subtraction, multiplication, and division, and view results on the display screen.
