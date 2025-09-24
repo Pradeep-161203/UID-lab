@@ -1,0 +1,57 @@
+Aim:
+  To Create a weather application that displays the weather forecast for a specific location.
+Description
+A weather application in React can be built by combining state management and API integration.
+The app has an input field where the user types a city name and clicks a search button. React then sends a request to a weather
+API (like OpenWeatherMap) to fetch real-time weather data. The response is stored in the component’s state and displayed on the screen.
+The app shows information such as temperature, weather condition (sunny, cloudy, rainy), humidity, and wind speed. React automatically
+re-renders the UI whenever the state updates, so the forecast changes instantly when a new location is entered.
+Coding:
+import React, { useState } from "react";
+import "./App.css";
+
+function App() {
+  const [city, setCity] = useState("");
+  const [weather, setWeather] = useState(null);
+  const API_KEY = "YOUR_OPENWEATHERMAP_API_KEY"; // Replace with your API key
+
+  const fetchWeather = async () => {
+    if (!city) return;
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
+    );
+    const data = await response.json();
+    setWeather(data);
+  };
+
+  const handleInputChange = (e) => setCity(e.target.value);
+
+  return (
+    <div className="App">
+      <h1>Weather App</h1>
+      <input
+        type="text"
+        value={city}
+        onChange={handleInputChange}
+        placeholder="Enter city"
+      />
+      <button onClick={fetchWeather}>Search</button>
+
+      {weather && weather.main ? (
+        <div className="weather-info">
+          <h2>{weather.name}</h2>
+          <p>Temperature: {weather.main.temp}°C</p>
+          <p>Condition: {weather.weather[0].main}</p>
+          <p>Humidity: {weather.main.humidity}%</p>
+          <p>Wind Speed: {weather.wind.speed} m/s</p>
+        </div>
+      ) : weather && weather.message ? (
+        <p>{weather.message}</p>
+      ) : null}
+    </div>
+  );
+}
+
+export default App;
+Result
+A weather app where the user enters a city name and sees the current temperature, weather condition, humidity, and wind speed for that location.
