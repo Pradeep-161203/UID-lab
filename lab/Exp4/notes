@@ -1,0 +1,331 @@
+Aim:
+  To Create a simple e-commerce website with minimum of three pages. Use React Router to implement routing between these
+pages.
+Description:
+A simple e-commerce website in React can be built with at least three pages:
+Home Page – Displays a welcome message, featured products, and navigation links.
+Products Page – Lists available products with details like name, price, and “Add to Cart” button.
+Cart Page – Shows items the user has added to their cart along with a checkout option.
+To switch between these pages, React Router is used. The <BrowserRouter>, <Routes>, and <Route> components handle navigation.
+Clicking on links such as “Home,” “Products,” or “Cart” updates the URL and loads the corresponding page without refreshing the entire site.
+This routing approach makes the website act like a Single Page Application (SPA), improving speed and user experience.
+Coding:
+import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+
+// Convert USD to INR (approximate rate: 1 USD = 83 INR)
+const USD_TO_INR = 83;
+
+const convertToRupees = (usdPrice) => {
+  return (usdPrice * USD_TO_INR).toFixed(2);
+};
+
+function Cart() {
+  const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
+  
+  console.log('Cart component - cartItems:', cartItems);
+
+  const calculateSubtotal = () => {
+    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
+  const calculateTax = () => {
+    return calculateSubtotal() * 0.08; // 8% tax
+  };
+
+  const calculateTotal = () => {
+    return calculateSubtotal() + calculateTax();
+  };
+
+  const handleCheckout = () => {
+    alert('Checkout functionality would be implemented here!');
+  };
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="page">
+        <div className="container">
+          <h1 className="page-title">Shopping Cart</h1>
+          <div className="empty-cart">
+            <div className="empty-cart-icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added any items to your cart yet.</p>
+            <Link to="/products" className="btn">
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page">
+      <div className="container">
+        <h1 className="page-title">Shopping Cart</h1>
+        
+        <div className="cart-layout">
+          <div className="cart-items">
+            <h2>Cart Items ({cartItems.length})</h2>
+            
+            {cartItems.map((item) => (
+              <div key={item.id} className="cart-item">
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.name} 
+                  className="cart-item-image"
+                />
+                
+                <div className="cart-item-details">
+                  <h3 className="cart-item-name">{item.name}</h3>
+                                     <p className="cart-item-price">₹{convertToRupees(item.price)}</p>
+                  
+                  <div className="cart-item-quantity">
+                    <label>Quantity:</label>
+                    <div className="quantity-controls">
+                      <button 
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        className="quantity-btn"
+                      >
+                        -
+                      </button>
+                      <span className="quantity-display">{item.quantity}</span>
+                      <button 
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        className="quantity-btn"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  
+                                           <p className="cart-item-total">
+                           Total: ₹{convertToRupees(item.price * item.quantity)}
+                         </p>
+                </div>
+                
+                <button 
+                  onClick={() => removeFromCart(item.id)}
+                  className="remove-item-btn"
+                  aria-label="Remove item"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          
+          <div className="cart-summary">
+            <h2>Order Summary</h2>
+            
+                               <div className="summary-row">
+                     <span>Subtotal:</span>
+                     <span>₹{convertToRupees(calculateSubtotal())}</span>
+                   </div>
+
+                   <div className="summary-row">
+                     <span>Tax (8%):</span>
+                     <span>₹{convertToRupees(calculateTax())}</span>
+                   </div>
+
+                   <div className="summary-row total">
+                     <span>Total:</span>
+                     <span>₹{convertToRupees(calculateTotal())}</span>
+                   </div>
+            
+            <button 
+              onClick={handleCheckout}
+              className="btn checkout-btn"
+              disabled={cartItems.length === 0}
+            >
+              Proceed to Checkout
+            </button>
+            
+            <Link to="/products" className="btn btn-secondary">
+              Continue Shopping
+            </Link>
+            
+            <button 
+              onClick={clearCart}
+              className="btn btn-outline clear-cart-btn"
+            >
+              Clear Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Cart;
+import { useState } from 'react';
+
+function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitStatus('success');
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+      
+      // Reset status after 3 seconds
+      setTimeout(() => setSubmitStatus(null), 3000);
+    }, 1500);
+  };
+
+  return (
+    <div className="page">
+      <div className="container">
+        <h1 className="page-title">Contact Us</h1>
+        <p className="page-description">
+          Have questions or need assistance? We'd love to hear from you. 
+          Send us a message and we'll respond as soon as possible.
+        </p>
+
+        <div className="contact-layout">
+          <div className="contact-info">
+            <h2>Get in Touch</h2>
+            <div className="contact-methods">
+              <div className="contact-method">
+                <div className="contact-icon">📍</div>
+                <div>
+                  <h3>Address</h3>
+                  <p>123 Fashion Street<br />Style City, CA 90210</p>
+                </div>
+              </div>
+              
+              <div className="contact-method">
+                <div className="contact-icon">📧</div>
+                <div>
+                  <h3>Email</h3>
+                  <p>hello@auroraclothing.com</p>
+                </div>
+              </div>
+              
+              <div className="contact-method">
+                <div className="contact-icon">📞</div>
+                <div>
+                  <h3>Phone</h3>
+                  <p>+1 (555) 123-4567</p>
+                </div>
+              </div>
+              
+              <div className="contact-method">
+                <div className="contact-icon">🕒</div>
+                <div>
+                  <h3>Business Hours</h3>
+                  <p>Monday - Friday: 9AM - 6PM<br />Saturday: 10AM - 4PM</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="contact-form-container">
+            <h2>Send us a Message</h2>
+            
+            {submitStatus === 'success' && (
+              <div className="success-message">
+                Thank you for your message! We'll get back to you soon.
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="contact-form">
+              <div className="form-group">
+                <label htmlFor="name">Name *</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email">Email *</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="subject">Subject *</label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="message">Message *</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  rows="5"
+                  className="form-textarea"
+                  placeholder="Tell us how we can help you..."
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn submit-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Contact;
+Result
+
+A three-page e-commerce site where users can navigate between Home, Products, and Cart using React Router.
